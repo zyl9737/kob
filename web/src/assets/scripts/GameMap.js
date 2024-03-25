@@ -13,6 +13,17 @@ export class GameMap extends AcGameObject {
         this.inner_walls_count = 20; // 内部墙的数量
         this.walls = []; // 墙
     }
+
+    check_connectivity(g, sx, sy, tx, ty) {
+        if (sx === tx && sy === ty) return true;
+        g[sx][sy] = true;
+        let dx = [-1, 0, 1, 0], dy = [0, 1, 0, -1];
+        for (let i = 0; i < 4; i++) {
+            let x = sx + dx[i], y = sy + dy[i];
+            if (!g[x][y] && this.check_connectivity(g, x, y, tx, ty)) return true;
+        }
+        return false;
+    }
     create_walls() {
         const g = [];
         for (let r = 0; r < this.rows; r ++ ) {
@@ -31,6 +42,20 @@ export class GameMap extends AcGameObject {
             g[0][c] = true;
             g[this.rows - 1][c] = true;
         }
+        // 创建随机墙
+        for (let i = 0; i < this.inner_walls_count / 2; i ++ ) {
+            for (let j = 0; j < 1000; j ++) {
+                let r = parseInt(Math.random() * this.rows);
+                let c = parseInt(Math.random() * this.cols);
+                if (g[r][c] || g[c][r]) continue;
+                if (r == this.rows - 2 && c == 1 || r == 1 && c == this.cols - 2) continue;
+
+                g[r][c] = g[c][r] = true;
+                break;
+            }
+        }
+        const copy_g = JSON.parse(JSON.stringify(g));
+        if(!this.check_connectivity(copy_g, this.rows - 2, 1, 1, this.cols - 2)) return false;
 
         for (let r = 0; r < this.rows; r ++ ) {
             for ( let c = 0; c < this.cols; c ++ ) {
@@ -39,9 +64,12 @@ export class GameMap extends AcGameObject {
                 }
             }
         }
+        return true;
     }
     start() {
-        this.create_walls();
+        for (let i = 0; i < 1000; i ++)
+            if (this.create_walls())
+                break;
     }
     update_size(){
         this.L = parseInt(Math.min(this.parent.clientWidth / this.cols, this.parent.clientHeight / this.rows));
