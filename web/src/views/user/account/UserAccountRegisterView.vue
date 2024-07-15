@@ -82,7 +82,6 @@
             confirmedPassword: confirmedPassword.value,
           },
           success(resp) {
-            console.log(resp);
             if (resp.result === "success") {
               success_message.value = "Success! Go to home page after 3 seconds...";
               $(".success_message").fadeIn();  // 渐变出现注册成功的提示

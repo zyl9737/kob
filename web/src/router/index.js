@@ -86,7 +86,24 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.requestAuth && !store.state.user.is_login) {
+  const jwt_token = localStorage.getItem("jwt_token");
+  let jwt_token_valid = false;
+
+  if (jwt_token){
+    store.commit("updateJwtToken", jwt_token);
+    store.dispatch("getInfo", {
+      success() {
+        jwt_token_valid = true;
+      },
+      error() {
+        alert("Invalid token! Please login!");
+        store.dispatch("logout");  // 清除浏览器内存和LocalStorage中的jwt_token
+        next({ name: "user_account_login" });
+      },
+    });
+  }
+  
+  if (to.meta.requestAuth && !store.state.user.is_login && !jwt_token_valid) {
     alert("Please login!");
     next({ name: "user_account_login" });
   } else {

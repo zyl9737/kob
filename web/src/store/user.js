@@ -55,6 +55,7 @@ export default {
       $.ajax({
         url: "http://localhost:3000/user/account/info/",
         type: "GET",
+        async: false,
         headers: {
           // 不是固定的，是官方推荐的写法，Authorization是在我们的后端JwtAuthenticationTokenFilter类中设置的
           Authorization: "Bearer " + context.state.jwt_token,

@@ -66,17 +66,14 @@
         store.dispatch("login", {  // 使用dispatch调用store的actions中的函数
           username: username.value,  // ref变量取值用.value
           password: password.value,
-          success(resp) {  // actions中的回调函数会返回resp
-            console.log(resp);
+          success() {  // actions中的回调函数会返回resp
             store.dispatch("getInfo", {
-              success(resp) {
-                console.log(resp);
+              success() {
                 router.push({ name: "home" });  // 跳转至home页面
               },
             });
           },
-          error(resp) {
-            console.log(resp);
+          error() {
             error_message.value = "The username or password is wrong!";
           },
         });
