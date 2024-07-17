@@ -1,18 +1,21 @@
 <template>
     <PlayGround v-if="$store.state.pk.status === 'playing'" />
     <MatchGround v-if="$store.state.pk.status === 'matching'" />
+    <ResultBoard v-if="$store.state.pk.loser != 'none'" />
 </template>
 
 <script>
 import MatchGround from "@/components/MatchGround.vue";
 import PlayGround from "@/components/PlayGround.vue";
+import ResultBoard from "@/components/ResultBoard.vue";
 import { onMounted, onUnmounted } from "vue";
 import { useStore } from "vuex";
 
 export default {
     components: {
         PlayGround,
-        MatchGround
+        MatchGround,
+        ResultBoard,
     },
     setup() {
         const store = useStore();
@@ -43,11 +46,27 @@ export default {
                         photo: data.opponent_photo,
                     });
 
-                    store.commit("updateGameMap", data.game_map); // 更新游戏地图
-
                     setTimeout(() => {
                         store.commit("updateStatus", "playing");
                     }, 3000);
+                    store.commit("updateGame", data.game); // 更新游戏内容
+
+                } else if (data.event === "move") {
+                    console.log(data);
+                    const gameObject = store.state.pk.gameObject;
+                    const [snake0, snake1] = gameObject.snakes;
+                    snake0.set_direction(data.a_direction);
+                    snake1.set_direction(data.b_direction);
+                    } else if (data.event === "result") {  // 游戏结束
+                    const gameObject = store.state.pk.gameObject;
+                    const [snake0, snake1] = gameObject.snakes;
+                    if (data.loser === "all" || data.loser === "A") {
+                        snake0.status = "die";
+                    }
+                    if (data.loser === "all" || data.loser === "B") {
+                        snake1.status = "die";
+                    }
+                    store.commit("updateLoser", data.loser);
                 }
             };
 
