@@ -4,6 +4,7 @@ export default {
       socket: null,  // 前端和后端建立的链接
       opponent_username: "",  // 对手的用户名
       opponent_photo: "",  // 对手的头像
+      game_map: null,  // 游戏地图
     },
     getters: {},
     mutations: {
@@ -17,6 +18,9 @@ export default {
       updateStatus(state, status) {
           state.status = status;
       },
+      updateGameMap(state, game_map) {
+          state.game_map = game_map;
+      }
     },
     actions: {},
     modules: {},

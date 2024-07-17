@@ -42,8 +42,11 @@ export default {
                         username: data.opponent_username,
                         photo: data.opponent_photo,
                     });
+
+                    store.commit("updateGameMap", data.game_map); // 更新游戏地图
+
                     setTimeout(() => {
-                        store.commit("updateGameStatus", "playing");
+                        store.commit("updateStatus", "playing");
                     }, 3000);
                 }
             };
